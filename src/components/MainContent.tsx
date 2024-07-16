@@ -8,7 +8,7 @@ const MainContent: React.FC = () => {
     <main className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
       <div className="box-border relative shrink-0 mt-5 h-auto">
         <p>
-          <span className="text-red-700">Enter some aaaaaaa22</span>
+          <span className="text-red-700">Enter some....</span>
         </p>
       </div>
     </main>

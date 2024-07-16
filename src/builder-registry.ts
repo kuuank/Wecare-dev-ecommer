@@ -9,8 +9,13 @@ import Layout from "./components/Layout";
 import Navigation from "./components/Navigation";
 import SearchBar from "./components/SearchBar";
 import Sidebar from "./components/Sidebar";
+import ProductList from "./components/SanPham/productList";
 
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
+
+Builder.registerComponent(ProductList, {
+  name: "ProductList",
+});
 
 Builder.registerComponent(Header, {
   name: "Header",
@@ -37,6 +42,7 @@ Builder.registerComponent(DataverseContent, {
 Builder.registerComponent(MainContent, {
   name: "MainContent",
 });
+
 Builder.registerComponent(Page, {
   name: "Page",
   inputs: [

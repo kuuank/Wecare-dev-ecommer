@@ -1,10 +1,7 @@
-// pages/api/getProductData.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import * as msal from "@azure/msal-node";
 import dotenv from "dotenv";
-
-// Load environment variables from .env file
 dotenv.config();
 
 const client_id = process.env.CLIENT_ID || "";
@@ -45,10 +42,18 @@ async function getToken() {
 }
 
 const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { crdfd_nhomsanphamtext } = req.query;
+
   const table = "crdfd_productses";
   const columns =
     "crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext";
-  const query = `$top=100&$select=${columns}`;
+
+  // Modify the query to filter by crdfd_nhomsanphamtext if 's provided
+  const filter = crdfd_nhomsanphamtext
+    ? `&$filter=crdfd_nhomsanphamtext eq '${crdfd_nhomsanphamtext}'`
+    : "";
+  const query = `$top=10&$select=${columns}${filter}`;
+
   const apiEndpoint = `https://wecare-ii.crm5.dynamics.com/api/data/v9.2/${table}?${query}`;
 
   try {

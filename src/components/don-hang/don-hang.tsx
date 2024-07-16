@@ -3,7 +3,7 @@
  */
 import React from "react";
 
-const MainContent: React.FC = () => {
+const donHang: React.FC = () => {
   return (
     <main className="flex flex-col ml-5 w-9/12 max-md:ml-0 max-md:w-full">
       <div className="box-border relative shrink-0 mt-5 h-auto">
@@ -15,4 +15,4 @@ const MainContent: React.FC = () => {
   );
 };
 
-export default MainContent;
+export default donHang;
