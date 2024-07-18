@@ -10,7 +10,11 @@ import Footer from "./Footer";
 const Layout: React.FC = () => {
   return (
     <>
-      <Header />
+      <Header
+        onSearch={function (searchTerm: string): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
       <div className="flex gap-5 max-md:flex-col max-md:gap-0">
         <Sidebar />
         <MainContent />
