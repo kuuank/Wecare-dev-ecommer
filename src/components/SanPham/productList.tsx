@@ -7,6 +7,7 @@ type Product = {
   crdfd_quycach: string;
   crdfd_chatlieu: string;
   crdfd_hoanthienbemat: string;
+  crdfd_hinhanh: string;
 };
 
 interface ProductListProps {
@@ -19,6 +20,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
   const [error, setError] = React.useState<Error | null>(null);
   const [page, setPage] = React.useState(1);
   const [limit, setLimit] = React.useState(10);
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
 
   const fetchAllData = async (searchTerm: string) => {
     try {
@@ -53,6 +55,21 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
     const startIndex = (page - 1) * limit;
     return allData.slice(startIndex, startIndex + limit);
   }, [allData, page, limit]);
+
+  const openImageModal = (imageSrc: string) => {
+    setSelectedImage(imageSrc);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+  };
+
+  const getImageSrc = (src: string) => {
+    if (!src) return "/path/to/default-image.jpg";
+    if (src.startsWith("data:")) return src;
+    if (src.startsWith("http://") || src.startsWith("https://")) return src;
+    return `data:image/jpeg;base64,${src}`;
+  };
 
   if (loading) {
     return (
@@ -118,6 +135,9 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
                 Hoàn thiện bề mặt
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
+                Hình Ảnh
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -137,6 +157,22 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-black">
                   {item.crdfd_hoanthienbemat}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-black">
+                  {item.crdfd_hinhanh && (
+                    <img
+                      src={getImageSrc(item.crdfd_hinhanh)}
+                      alt={`Hình ảnh của ${item.crdfd_nhomsanphamtext}`}
+                      className="w-16 h-16 object-cover rounded cursor-pointer"
+                      onClick={() =>
+                        openImageModal(getImageSrc(item.crdfd_hinhanh))
+                      }
+                      onError={(e) => {
+                        e.currentTarget.src = "/path/to/default-image.jpg";
+                        e.currentTarget.alt = "Hình ảnh không khả dụng";
+                      }}
+                    />
+                  )}
                 </td>
               </tr>
             ))}
@@ -202,6 +238,21 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
           </button>
         </div>
       </div>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeImageModal}
+        >
+          <div className="max-w-3xl max-h-3xl">
+            <img
+              src={selectedImage}
+              alt="Enlarged product image"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

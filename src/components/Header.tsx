@@ -53,7 +53,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
           <label htmlFor="search-input" className="sr-only">
             Tìm kiếm và nhấn enter
           </label>
-
           <input
             id="search-input"
             type="text"

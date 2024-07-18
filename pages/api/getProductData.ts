@@ -49,13 +49,13 @@ async function getToken() {
 
 const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
   const { crdfd_nhomsanphamtext } = req.query;
-
+  const columnSearch = "crdfd_nhomsanphamtext";
   const table = "crdfd_productses";
   const columns =
-    "crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext";
+    "crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext,crdfd_hinhanh";
 
   const filter = crdfd_nhomsanphamtext
-    ? `&$filter=crdfd_nhomsanphamtext eq '${crdfd_nhomsanphamtext}'`
+    ? `&$filter=${columnSearch} eq '${crdfd_nhomsanphamtext}'`
     : "";
 
   const query = `$select=${columns}${filter}`;
