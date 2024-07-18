@@ -48,28 +48,26 @@ async function getToken() {
 }
 
 const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { crdfd_nhomsanphamtext, limit = 30, offset = 1 } = req.query;
+  const { crdfd_nhomsanphamtext } = req.query;
 
   const table = "crdfd_productses";
   const columns =
     "crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext";
 
-  // Modify the query to filter by crdfd_nhomsanphamtext if it's provided
   const filter = crdfd_nhomsanphamtext
     ? `&$filter=crdfd_nhomsanphamtext eq '${crdfd_nhomsanphamtext}'`
     : "";
 
-  const initialQuery = `$top=${limit}&$select=${columns}${filter}`;
-  const initialEndpoint = `https://wecare-ii.crm5.dynamics.com/api/data/v9.2/${table}?${initialQuery}`;
+  const query = `$select=${columns}${filter}`;
+  const initialEndpoint = `https://wecare-ii.crm5.dynamics.com/api/data/v9.2/${table}?${query}`;
 
   let apiEndpoint = initialEndpoint;
   let allResults: Product[] = [];
-  let tokens = 0; // Increment this to attain offset by # of tokens of $top
 
   try {
     const token = await getToken();
 
-    while (Number(tokens) * Number(limit) < Number(offset) + Number(limit)) {
+    while (apiEndpoint) {
       console.log(`Fetching data from: ${apiEndpoint}`);
       const response = await axios.get(apiEndpoint, {
         headers: {
@@ -86,24 +84,15 @@ const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
       ) {
         allResults = allResults.concat(response.data.value);
         apiEndpoint = response.data["@odata.nextLink"];
-        tokens++;
-
-        if (!apiEndpoint) break; // Break if there's no next link
       } else {
         break;
       }
     }
 
-    // Get the desired page of results
-    const pagedResults = allResults.slice(
-      Number(offset),
-      Number(offset) + Number(limit)
-    );
-    res.status(200).json(pagedResults);
+    res.status(200).json(allResults);
   } catch (error) {
     console.error("Error fetching data", error);
     res.status(500).json({ error: "Error fetching data" });
   }
 };
-
 export default getProductData;
