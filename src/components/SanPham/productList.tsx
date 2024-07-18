@@ -1,6 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-import getProductData from "../../../pages/api/getProductData";
+
 type Product = {
   crdfd_nhomsanphamtext: string;
   crdfd_thuonghieu: string;
@@ -9,7 +9,11 @@ type Product = {
   crdfd_hoanthienbemat: string;
 };
 
-const ProductList: React.FC = () => {
+interface ProductListProps {
+  searchTerm: string;
+}
+
+const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
   const [data, setData] = React.useState<Product[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
@@ -17,7 +21,9 @@ const ProductList: React.FC = () => {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("/api/getProductData");
+        const response = await axios.get(
+          `/api/getProductData?crdfd_nhomsanphamtext=${searchTerm}`
+        );
         if (Array.isArray(response.data)) {
           setData(response.data);
         } else {
@@ -31,7 +37,7 @@ const ProductList: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [searchTerm]); // Fetch data whenever searchTerm changes
 
   if (loading) {
     return <div>Đang tải dữ liệu...</div>;

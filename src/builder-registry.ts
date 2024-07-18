@@ -10,8 +10,13 @@ import Navigation from "./components/Navigation";
 import SearchBar from "./components/SearchBar";
 import Sidebar from "./components/Sidebar";
 import ProductList from "./components/SanPham/productList";
+import donHang from "./components/don-hang/don-hang";
 
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
+
+Builder.registerComponent(donHang, {
+  name: "donHang",
+});
 
 Builder.registerComponent(ProductList, {
   name: "ProductList",
