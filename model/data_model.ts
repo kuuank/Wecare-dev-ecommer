@@ -18,4 +18,11 @@ export default interface productGroup {
   crdfd_nhomsanphamchatext: string;
   crdfd_capsptheomargin: string;
   crdfd_productgroupid: string;
+  _crdfd_nhomsanphamcap1_value: string;
+  _crdfd_nhomsanphamcha_value: string;
+  _crdfd_cap1_value: string;
+  _crdfd_cap2_value: string;
+  _crdfd_cap3_value: string;
+  _crdfd_cap4_value: string;
+  _crdfd_cap5_value: string;
 }

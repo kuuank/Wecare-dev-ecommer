@@ -1,22 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios from "axios";
 import { getAccessToken } from "./getAccessToken";
-import Products from "../../model/data_model";
 
-const getProductGroup = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { crdfd_productname } = req.query;
-  const columnSearch = "crdfd_productname";
+const getDistinctProductGroups = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
   const table = "crdfd_productgroups";
   const columns =
-    "_crdfd_nhomsanphamcap1_value, crdfd_productname,crdfd_nhomsanphamchafull,crdfd_nhomsanphamcap1text,crdfd_hinhanh_url,crdfd_nhomsanphamfull,crdfd_nhomsanphamchatext,crdfd_nhomsptext,crdfd_chatlieu,cr1bb_nganh_nghe,crdfd_capsptext,";
-
+    "crdfd_nhomsanphamcap1text,_crdfd_cap1_value, crdfd_productname";
   let filter = "_crdfd_nhomsanphamcap1_value ne null";
-
   const query = `$select=${columns}&$filter=${filter}`;
   const initialEndpoint = `https://wecare-ii.crm5.dynamics.com/api/data/v9.2/${table}?${query}`;
 
   let apiEndpoint = initialEndpoint;
-  let allResults: Products[] = [];
+  let distinctGroups = new Map<string, { name: string; products: string[] }>();
 
   try {
     const token = await getAccessToken();
@@ -36,13 +34,34 @@ const getProductGroup = async (req: NextApiRequest, res: NextApiResponse) => {
         Array.isArray(response.data.value) &&
         response.data.value.length > 0
       ) {
-        allResults = allResults.concat(response.data.value);
+        response.data.value.forEach((item: any) => {
+          if (item._crdfd_cap1_value) {
+            if (!distinctGroups.has(item._crdfd_cap1_value)) {
+              distinctGroups.set(item._crdfd_cap1_value, {
+                name: item.crdfd_nhomsanphamcap1text,
+                products: [],
+              });
+            }
+            if (item.crdfd_productname) {
+              distinctGroups
+                .get(item._crdfd_cap1_value)
+                ?.products.push(item.crdfd_productname);
+            }
+          }
+        });
         apiEndpoint = response.data["@odata.nextLink"];
       } else {
         break;
       }
     }
 
+    const allResults = Array.from(distinctGroups.entries()).map(
+      ([id, data]) => ({
+        id,
+        name: data.name,
+        products: data.products,
+      })
+    );
     res.status(200).json(allResults);
   } catch (error) {
     console.error("Error fetching data", error);
@@ -50,4 +69,4 @@ const getProductGroup = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default getProductGroup;
+export default getDistinctProductGroups;
