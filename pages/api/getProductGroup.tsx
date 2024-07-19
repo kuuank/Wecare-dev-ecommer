@@ -3,19 +3,16 @@ import axios from "axios";
 import { getAccessToken } from "./getAccessToken";
 import Products from "../../model/data_model";
 
-const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { crdfd_nhomsanphamtext } = req.query;
-  const columnSearch = "crdfd_nhomsanphamtext";
-  const table = "crdfd_productses";
+const getProductGroup = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { crdfd_productname } = req.query;
+  const columnSearch = "crdfd_productname";
+  const table = "crdfd_productgroups";
   const columns =
-    "_crdfd_productgroup_value,cr1bb_nhomsanphamcha,crdfd_manhomsp,crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext,cr1bb_giaban"; //,crdfd_hinhanh
+    "_crdfd_nhomsanphamcap1_value, crdfd_productname,crdfd_nhomsanphamchafull,crdfd_nhomsanphamcap1text,crdfd_hinhanh_url,crdfd_nhomsanphamfull,crdfd_nhomsanphamchatext,crdfd_nhomsptext,crdfd_chatlieu,cr1bb_nganh_nghe,crdfd_capsptext,";
 
-  const filter = crdfd_nhomsanphamtext
-    ? `&$filter=contains(${columnSearch}, '${encodeURIComponent(
-        crdfd_nhomsanphamtext.toString()
-      )}')`
-    : "";
-  const query = `$select=${columns}${filter}`;
+  let filter = "_crdfd_nhomsanphamcap1_value ne null";
+
+  const query = `$select=${columns}&$filter=${filter}`;
   const initialEndpoint = `https://wecare-ii.crm5.dynamics.com/api/data/v9.2/${table}?${query}`;
 
   let apiEndpoint = initialEndpoint;
@@ -53,4 +50,4 @@ const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default getProductData;
+export default getProductGroup;

@@ -6,7 +6,7 @@ import "./builder-registry";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "My Dataverse Project",
+  title: "Wecare - Siêu thị công nghiệp",
   description: "A Next.js project with Builder.io and Dataverse",
 };
 

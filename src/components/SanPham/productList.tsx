@@ -1,21 +1,12 @@
 import * as React from "react";
 import axios from "axios";
-
-type Product = {
-  crdfd_nhomsanphamtext: string;
-  crdfd_thuonghieu: string;
-  crdfd_quycach: string;
-  crdfd_chatlieu: string;
-  crdfd_hoanthienbemat: string;
-  crdfd_hinhanh: string;
-};
+import Products from "../../../model/data_model";
 
 interface ProductListProps {
   searchTerm: string;
 }
-
 const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
-  const [allData, setAllData] = React.useState<Product[]>([]);
+  const [allData, setAllData] = React.useState<Products[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
   const [page, setPage] = React.useState(1);
@@ -64,12 +55,12 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
     setSelectedImage(null);
   };
 
-  const getImageSrc = (src: string) => {
-    if (!src) return "/path/to/default-image.jpg";
-    if (src.startsWith("data:")) return src;
-    if (src.startsWith("http://") || src.startsWith("https://")) return src;
-    return `data:image/jpeg;base64,${src}`;
-  };
+  // const getImageSrc = (src: string) => {
+  //   if (!src) return "/path/to/default-image.jpg";
+  //   if (src.startsWith("data:")) return src;
+  //   if (src.startsWith("http://") || src.startsWith("https://")) return src;
+  //   return `data:image/jpeg;base64,${src}`;
+  // };
 
   if (loading) {
     return (
@@ -136,7 +127,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
                 Hoàn thiện bề mặt
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">
-                Hình Ảnh
+                Giá bán
               </th>
             </tr>
           </thead>
@@ -159,6 +150,9 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
                   {item.crdfd_hoanthienbemat}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-black">
+                  {item.cr1bb_giaban}
+                </td>
+                {/* <td className="px-6 py-4 whitespace-nowrap text-black">
                   {item.crdfd_hinhanh && (
                     <img
                       src={getImageSrc(item.crdfd_hinhanh)}
@@ -173,7 +167,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
                       }}
                     />
                   )}
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>
@@ -195,6 +189,7 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
             <option value={20}>20</option>
             <option value={30}>30</option>
           </select>
+          <span className="ml-4">Total records: {totalCount}</span>
         </div>
         <div className="flex items-center space-x-2">
           <button
