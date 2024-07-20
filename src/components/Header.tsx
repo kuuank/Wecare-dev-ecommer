@@ -127,8 +127,6 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
             href={item.href}
             className="text-cyan-600 hover:text-cyan-700 text-base font-medium no-underline"
           >
-
-            
             {item.label}
           </a>
         ))}
