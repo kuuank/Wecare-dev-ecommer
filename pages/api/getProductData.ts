@@ -4,15 +4,19 @@ import { getAccessToken } from "./getAccessToken";
 import Products from "../../model/data_model";
 
 const getProductData = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { crdfd_nhomsanphamtext } = req.query;
-  const columnSearch = "crdfd_nhomsanphamtext";
+  const { searchTerm, searchKey } = req.query;
+
+  // Đảm bảo searchTerm và searchKey là string.
+  const searchTermString = Array.isArray(searchTerm) ? searchTerm[0] : searchTerm || "";
+  const searchKeyString = Array.isArray(searchKey) ? searchKey[0] : searchKey || "";
+
   const table = "crdfd_productses";
   const columns =
     "_crdfd_productgroup_value,cr1bb_nhomsanphamcha,crdfd_manhomsp,crdfd_thuonghieu,crdfd_quycach,crdfd_chatlieu,crdfd_hoanthienbemat,crdfd_nhomsanphamtext,cr1bb_giaban"; //,crdfd_hinhanh
 
-  const filter = crdfd_nhomsanphamtext
-    ? `&$filter=contains(${columnSearch}, '${encodeURIComponent(
-        crdfd_nhomsanphamtext.toString()
+  const filter = searchTermString
+    ? `&$filter=contains(${encodeURIComponent(searchKeyString)}, '${encodeURIComponent(
+        searchTermString
       )}')`
     : "";
   const query = `$select=${columns}${filter}`;

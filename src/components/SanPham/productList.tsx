@@ -4,8 +4,10 @@ import Products from "../../../model/data_model";
 
 interface ProductListProps {
   searchTerm: string;
+  searchKey: string;
 }
-const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
+
+const ProductList: React.FC<ProductListProps> = ({ searchTerm, searchKey }) => {
   const [allData, setAllData] = React.useState<Products[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<Error | null>(null);
@@ -13,11 +15,14 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
   const [limit, setLimit] = React.useState(10);
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
 
-  const fetchAllData = async (searchTerm: string) => {
+  const fetchAllData = async (searchTerm: string, searchKey: string) => {
     try {
       setLoading(true);
+      const query = searchTerm && searchKey
+        ? `searchTerm=${encodeURIComponent(searchTerm)}&searchKey=${encodeURIComponent(searchKey)}`
+        : ``;
       const response = await axios.get(
-        `/api/getProductData?crdfd_nhomsanphamtext=${searchTerm}`
+        `/api/getProductData?${query}`
       );
       if (Array.isArray(response.data)) {
         setAllData(response.data);
@@ -32,8 +37,8 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
   };
 
   React.useEffect(() => {
-    fetchAllData(searchTerm);
-  }, [searchTerm]);
+    fetchAllData(searchTerm, searchKey);
+  }, [searchTerm, searchKey]);
 
   const totalCount = allData.length;
   const totalPages = Math.ceil(totalCount / limit);
@@ -46,21 +51,6 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
     const startIndex = (page - 1) * limit;
     return allData.slice(startIndex, startIndex + limit);
   }, [allData, page, limit]);
-
-  const openImageModal = (imageSrc: string) => {
-    setSelectedImage(imageSrc);
-  };
-
-  const closeImageModal = () => {
-    setSelectedImage(null);
-  };
-
-  // const getImageSrc = (src: string) => {
-  //   if (!src) return "/path/to/default-image.jpg";
-  //   if (src.startsWith("data:")) return src;
-  //   if (src.startsWith("http://") || src.startsWith("https://")) return src;
-  //   return `data:image/jpeg;base64,${src}`;
-  // };
 
   if (loading) {
     return (
@@ -152,22 +142,6 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-black">
                   {item.cr1bb_giaban}
                 </td>
-                {/* <td className="px-6 py-4 whitespace-nowrap text-black">
-                  {item.crdfd_hinhanh && (
-                    <img
-                      src={getImageSrc(item.crdfd_hinhanh)}
-                      alt={`Hình ảnh của ${item.crdfd_nhomsanphamtext}`}
-                      className="w-16 h-16 object-cover rounded cursor-pointer"
-                      onClick={() =>
-                        openImageModal(getImageSrc(item.crdfd_hinhanh))
-                      }
-                      onError={(e) => {
-                        e.currentTarget.src = "/path/to/default-image.jpg";
-                        e.currentTarget.alt = "Hình ảnh không khả dụng";
-                      }}
-                    />
-                  )}
-                </td> */}
               </tr>
             ))}
           </tbody>
@@ -233,21 +207,6 @@ const ProductList: React.FC<ProductListProps> = ({ searchTerm }) => {
           </button>
         </div>
       </div>
-
-      {selectedImage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={closeImageModal}
-        >
-          <div className="max-w-3xl max-h-3xl">
-            <img
-              src={selectedImage}
-              alt="Enlarged product image"
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

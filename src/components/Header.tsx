@@ -8,7 +8,7 @@ interface NavItem {
 }
 
 interface HeaderProps {
-  onSearch: (searchTerm: string) => void; // Function prop to handle search
+  onSearch: (searchTerm: string, searchCategory: string) => void; // Function prop to handle search
 }
 
 const navItems: NavItem[] = [
@@ -20,14 +20,33 @@ const navItems: NavItem[] = [
   { label: "Kho vận", href: "/logistics" },
 ];
 
+const searchCategories = [
+  "TÊN NHÓM SẢN PHẨM",
+  "THƯƠNG HIỆU",
+  "QUY CÁCH",
+  "CHẤT LIỆU",
+  "HOÀN THIỆN BỀ MẶT",
+  "GIÁ BÁN"
+];
+
+const searchKeys: { [key: string]: string } = {
+  "TÊN NHÓM SẢN PHẨM": "crdfd_nhomsanphamtext",
+  "THƯƠNG HIỆU": "crdfd_thuonghieu",
+  "QUY CÁCH": "crdfd_quycach",
+  "CHẤT LIỆU": "crdfd_chatlieu",
+  "HOÀN THIỆN BỀ MẶT": "crdfd_hoanthienbemat",
+  "GIÁ BÁN": "cr1bb_giaban"
+};
+
 const Header: React.FC<HeaderProps> = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchCategory, setSearchCategory] = useState(searchCategories[0]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     // Call the prop function passed from the parent to handle search and reload
-    onSearch(searchTerm.trim());
+    onSearch(searchTerm.trim(), searchKeys[searchCategory]);
 
     // Reset the input field
     setSearchTerm("");
@@ -48,8 +67,24 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
 
         <form
           onSubmit={handleSubmit}
-          className="flex items-center py-2 px-5 bg-white border border-neutral-300 rounded-full shadow-sm max-w-lg w-full mx-4"
+          className="flex items-center py-2 px-5 bg-white border border-neutral-300 rounded-full shadow-sm max-w-2xl w-full mx-4"
         >
+          <label htmlFor="search-category" className="sr-only">
+            Chọn loại tìm kiếm
+          </label>
+          <select
+            id="search-category"
+            className="mr-3 py-2 px-3 text-base border-none rounded-full focus:outline-none"
+            value={searchCategory}
+            onChange={(e) => setSearchCategory(e.target.value)}
+          >
+            {searchCategories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+
           <label htmlFor="search-input" className="sr-only">
             Tìm kiếm và nhấn enter
           </label>
@@ -57,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({ onSearch }) => {
             id="search-input"
             type="text"
             placeholder="Tìm kiếm và nhấn enter"
-            className="flex-grow px-3 py-2 text-base rounded-full focus:outline-none"
+            className="flex-grow px-3 py-2 text-base border-none rounded-full focus:outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
